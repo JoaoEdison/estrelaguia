@@ -1,0 +1,36 @@
+{% load static %}
+{% include "header.html" %}
+{% load tz %}
+
+{% autoescape off %}
+	{{text}}
+{% endautoescape %}
+
+{% if user.is_authenticated %}
+<form action="{{question_id}}/answer/" method="POST" enctype="multipart/form-data">
+	{% csrf_token %}
+	<input type="hidden" name="prev" value="{{request.path}}" />
+	<button id="swap" type="button" onClick="button.swap(event);">Responder</button>
+</form>
+{% endif %}
+
+{% if resp_list %}
+<ol>
+	{% timezone "America/Sao_Paulo" %}
+		{% for resp in resp_list %}
+		<li>{{resp.user}} {{resp.date|date:"d/m/Y G:i:s"}}
+			{% autoescape off %}
+				{{resp.text}}
+			{% endautoescape %}
+		</li>
+		{% endfor %}
+	{% endtimezone %}
+</ol>
+{% endif %}
+
+<script type="text/javascript" src="{% static 'utils.js' %}"></script>
+<script type="text/javascript">
+button = new Button(document.getElementById("swap"), "answer_form", "Responder", "answer_text")
+</script>
+
+{% include "footer.html" %}

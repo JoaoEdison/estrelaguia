@@ -1,0 +1,40 @@
+{% load static %}
+{% include "header.html" %}
+{% load tz %}
+
+<form method="GET">
+	<input type="text" name="pattern">
+	{% if user.is_authenticated %}
+	<label>Minhas Perguntas: <input type="checkbox" name="my"></label>
+	{% endif %}
+	<input type="submit" value="Pesquisar" />
+</form>
+
+{% if user.is_authenticated %}
+<form method="POST" enctype="multipart/form-data">
+	{% csrf_token %}
+	<button id="swap" type="button" onClick="button.swap(event);">Perguntar</button>
+</form>
+
+<a href="{{request.path}}my-questions">Gerenciar Perguntas</a>
+
+{% endif %}
+
+<main>
+	<ul>
+		{% if question_list %}
+		{% timezone "America/Sao_Paulo" %}
+			{% for q in question_list %}
+			<li><a href="{{q.id}}">{{q.id}}</a> {{q.user}} {{q.date|date:"d/m/Y G:i:s"}} {{q.text|striptags}}</li>
+			{% endfor %}
+		{% endtimezone %}
+		{% endif %}
+	</ul>
+</main>
+
+<script type="text/javascript" src="{% static 'utils.js' %}"></script>
+<script type="text/javascript">
+button = new Button(document.getElementById("swap"), "question_form", "Perguntar", "question_text")
+</script>
+
+{% include "footer.html" %}

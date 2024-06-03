@@ -102,7 +102,6 @@ INSERT INTO sessao(usuario) VALUES(1);
 INSERT INTO pergunta(usuario, texto) VALUES(1, 'Como localizar a constelação de Orion?');
 INSERT INTO pergunta(usuario, texto) VALUES(1, 'Quais planetas estão visíveis no céu nos meses de abril e maio?');
 INSERT INTO resposta(pergunta, usuario, texto) VALUES(2, 1, 'Os planetas visíveis são X, Y e Z.');
-INSERT INTO comentario(publicacao, usuario, texto) VALUES(1, 1, 'Os planetas visíveis são X, Y e Z.');
 SELECT * FROM usuario;
 SELECT * FROM sessao;
 SELECT * FROM pergunta;

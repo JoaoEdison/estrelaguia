@@ -1,0 +1,15 @@
+{% load static %}
+{% include "header.html" %}
+<main>
+	<h1>Entrar</h1>
+	{% if error %}
+		<p>{{error}}</p>
+	{% endif %}
+	<form method="POST">
+		{% csrf_token %}
+		{{ form }}
+		<input type="submit" value="Entrar" />
+	</form>
+	<a href="{{req.get_host}}/register/">Cadastrar-se</a>
+</main>
+{% include "footer.html" %}

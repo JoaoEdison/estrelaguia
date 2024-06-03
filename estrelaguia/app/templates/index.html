@@ -1,9 +1,24 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Estrela Guia</title>
-</head>
-<body>
-	<p>Olá mundo.</p>
-</body>
-</html>
+{% include "header.html" %}
+<main>
+</main>
+<aside>
+	<ul>
+		{% if question_list %}
+			{% for question in question_list %}
+				<li>{{question.id}}</li>
+			{% endfor %}
+		{% endif %}
+	</ul>
+</aside>
+<!--
+		<article>
+			<header></header>
+
+			<section></section>
+			<section></section>
+
+			<footer></footer>
+		</article>
+		<article></article>
+-->
+{% include "footer.html" %}

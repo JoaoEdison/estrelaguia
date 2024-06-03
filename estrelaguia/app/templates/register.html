@@ -1,0 +1,14 @@
+{% include "header.html" %}
+<main>
+	<h1>{{page_name}}</h1>
+	{% if error %}
+		<p>{{error}}</p>
+	{% endif %}
+	<form method="POST">
+		{% csrf_token %}
+		{{ form }}
+		<input type="submit" value="Submeter" />
+	</form>
+</main>
+
+{% include "footer.html" %}
