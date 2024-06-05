@@ -1,5 +1,5 @@
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template import loader
 from django import forms
 from django.contrib.auth import authenticate, login, logout
@@ -106,6 +106,12 @@ def questions(req):
         'previous_pages' : bread(req.path)
     }
     return render(req, 'questions.html', context)
+
+def my_question_delete(req, question_id):
+    question = Question.objects.get(pk=question_id)
+    if question.user.id == req.user.id and Answer.objects.filter(question=question_id).count() == 0:
+        question.delete()
+    return redirect(my_questions)
 
 def my_questions(req):
     question_list = Question.objects.filter(user=req.user.id).order_by('-date')

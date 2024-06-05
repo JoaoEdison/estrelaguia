@@ -12,5 +12,6 @@ urlpatterns = [
     path("questions/", views.questions),
     path("questions/<int:question_id>", views.one_question),
     path("questions/<int:question_id>/answer/", views.answer),
-    path("questions/my-questions", views.my_questions),    
+    path("questions/my-questions/", views.my_questions),
+    path("questions/my-questions/<int:question_id>/delete/", views.my_question_delete)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -2,45 +2,28 @@
 {% load tz %}
 
 <main>
-    <button type="button" onclick="selectAll()">Marcar Todos</button>
-    <button type="button" onclick="desselectAll()">Desmarcar Todos</button>
-    <button type="button" onclick="removeQuestions()">Deletar</button>
-    {% if question_list %}
-	{% timezone "America/Sao_Paulo" %}
-	<table id="question_table">
-        <tr>
-            <th>Id da Questão</th>
-            <th>Data</th>
-            <th>Texto</th>
-            <th>Marcar</th>
-        </tr>	
-		{% for q in question_list %}
-		<tr data-id="{{q.id}}">
-            <td><a href="{{q.id}}">{{q.id}}</a></td>
-            <td>{{q.date|date:"d/m/Y G:i:s"}}</td>
-            <td>{{q.text|striptags}}</td>
-            <td><input type="checkbox"></td>
-            <td><a href="{{request.path}}/{{q.id}}/edit">Editar</a></td>
-        </tr>
-		{% endfor %}
-    </table>
-    {% endtimezone %}
+	{% if question_list %}
+    		{% timezone "America/Sao_Paulo" %}
+		<table id="question_table">
+			<tr>
+			    <th>Questão</th>
+			    <th>Data</th>
+			    <th>Texto</th>
+			    <th>Editar</th>
+			    <th>Deletar</th>
+			</tr>	
+			{% for q in question_list %}
+			<tr>
+				<td><a href="/questions/{{q.id}}">{{q.id}}</a></td>
+				<td>{{q.date|date:"d/m/Y G:i:s"}}</td>
+				<td>{{q.text|striptags}}</td>
+				<td><a href="{{request.path}}{{q.id}}/edit/">Editar</a></td>
+				<td><a href="{{request.path}}{{q.id}}/delete/">Deletar</a></td>
+			</tr>
+			{% endfor %}
+		</table>
+		{% endtimezone %}
 	{% endif %}
 </main>
-
-<script type="text/javascript">
-function selectAll() {
-    var trs = document.getElementsByTagName('tr')
-    for (i=1; i < trs.length; i++)
-        if (trs[i].children[3].children[0].checked)
-            console.log(trs[i].dataset.id)
-            // fazer a requisição para a rota de exclusão
-            // (se o usuario logado for diferente de quem pertence a pergunta cancelar o pedido)
-}
-
-function removeQuestions() {
-
-}
-</script>
 
 {% include "footer.html" %}

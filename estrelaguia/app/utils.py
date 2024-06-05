@@ -14,7 +14,7 @@ def bread(s):
     bread = []
     i = 0
     while s != "/":
-        s = n_last_path(s, i)
+        s = n_last_path(s, 0)
         bread.append(s)
         i += 1
     return reversed(bread)
