@@ -2,7 +2,7 @@ function setPositionTextarea(pos, e) {
 	e.target.value = pos
 }
 
-function createCustomFields(text_name, e) {
+function createCustomFields(e) {
 	const height = 400
 	const width = 400
 	var components = "";
@@ -56,7 +56,7 @@ class Button {
 			<textarea id=\""+this.#text_name+"\" name=\""+this.#name+"\" maxlength=\"1000\"\
 			 autocomplete=\"on\" autocorrect=\"on\" autofocus required onBlur=\"button.record(event)\"></textarea>\
 			<br>\
-			<input id=\"input_files\" type=\"file\" name=\"files\" accept=\"image/*\" onChange=\"createCustomFields("+this.#text_name+",event)\" multiple />\
+			<input id=\"input_files\" type=\"file\" name=\"files\" accept=\"image/*\" onChange=\"createCustomFields(event)\" multiple />\
 			<div id=\"files_form\"></div>\
 			</div>"
 		}

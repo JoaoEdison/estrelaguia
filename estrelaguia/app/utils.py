@@ -17,4 +17,5 @@ def bread(s):
         s = n_last_path(s, 0)
         bread.append(s)
         i += 1
-    return reversed(bread)
+    bread.reverse()
+    return bread

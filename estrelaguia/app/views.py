@@ -121,6 +121,37 @@ def my_questions(req):
     }
     return render(req, 'my-questions.html', context)
 
+def edit_question(req, question_id):
+    if req.method == 'POST':
+        question = Question.objects.get(pk=question_id)
+        question.text = req.POST['question_text']
+        question.save()
+        # Se eh um arranjo
+        for i in req.POST.lists():
+            field_name = i[0]
+            parentesis = field_name.find("[]")
+            if parentesis > -1:
+                values = i[1]
+                attach = Attachment.objects.filter(name=field_name[:parentesis])
+                if 'on' in values:                    
+                    attach.delete()
+                else:
+                    attach.update(
+                        position = values[0],              
+                        height = values[1],
+                        width = values[2],
+                        centralization = values[3]
+                    )
+        return redirect(my_questions)
+    previous = bread(req.path)
+    previous.pop(-2)
+    context = {
+        'question' : Question.objects.get(pk=question_id),
+        'files' : Attachment.objects.filter(question=question_id),
+        'previous_pages' : previous
+    }
+    return render(req, 'edit-question.html', context)
+
 def include_imgs(objs, text):
     offset = 0
     for i in objs.all():
@@ -142,7 +173,7 @@ def one_question(req, question_id):
         'resp_list' : changes,
         'previous_pages' : bread(req.path)
     }
-    return render(req, 'one_question.html', context)
+    return render(req, 'one-question.html', context)
 
 def answer(req, question_id):
     if req.method == 'POST' and req.user.is_authenticated:
