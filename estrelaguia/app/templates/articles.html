@@ -1,0 +1,67 @@
+{% load static %}
+{% include "header.html" %}
+{% load tz %}
+
+<form method="GET">
+	<input type="search" name="pattern" />
+	<p>Pesquisar em</p>
+	<label>Título: <input type="checkbox" name="title" checked></label>
+	<label>Subtítulo: <input type="checkbox" name="subtitle" checked></label>
+	<label>Texto: <input type="checkbox" name="text" checked></label>
+	<br>
+	{% if user.is_authenticated %}
+	<label>Minhas Publicações: <input type="checkbox" name="my"></label>
+	<br>
+	{% endif %}
+	<input type="submit" value="Pesquisar" />
+</form>
+
+{% if user.is_authenticated %}
+
+<form method="POST" enctype="multipart/form-data">
+	{% csrf_token %}
+	<button id="swap" type="button" onClick="button.swap(event);">Publicar</button>
+</form>
+
+<a href="{{request.path}}my-articles">Gerenciar Artigos</a>
+
+{% endif %}
+
+<main>
+	{% if article_list %}
+	{% timezone "America/Sao_Paulo" %}
+		<ul>
+		{% for a in article_list %}
+			<li>
+			<article>
+				<header>
+					<h2><a href="{{a.id}}">{{a.title}}</a></h2>
+					{% if a.subtitle %}
+						<h3>{{a.subtitle}}</h3>
+					{% endif %}
+					<address>Por <a rel="author" href="/profile/{{a.user.id}}">{{a.user}}</a></address> 
+					<time pubdate datetime="{{a.date|date:"Y-m-d"}}"
+						title="{{a.date|date:"DATE_FORMAT"}}">
+						{{a.date|date:"d/m/Y"}}
+					</time>
+				</header>
+				<p>{{ a.text|striptags|truncatechars:100 }}</p>
+			</article>
+			</li>
+		{% endfor %}
+		</ul>
+	{% endtimezone %}
+	{% endif %}
+</main>
+
+<script type="text/javascript" src="{% static 'utils.js' %}"></script>
+<script type="text/javascript">
+text_area = new TextAreaForm("article_text", "text_area")
+files_obj = new FileInputs("files_obj","text_area")
+submit = new SubmitButton("Publicar")
+title = new TextField("title", "Título: ", true, 60)
+subtitle= new TextField("subtitle", "Subtítulo: ", false, 100)
+button = new Button(document.getElementById("swap"), "article_form", "files_obj", [title, subtitle, text_area, submit])
+</script>
+
+{% include "footer.html" %}

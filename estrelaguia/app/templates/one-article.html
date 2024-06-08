@@ -1,0 +1,58 @@
+{% load static %}
+{% include "header.html" %}
+{% load tz %}
+
+<main>
+	{% timezone "America/Sao_Paulo" %}
+		<article>
+			<header>
+				<h1>{{article.title}}</h1>
+				{% if article.subtitle %}
+					<h2>{{article.subtitle}}</h2>
+				{% endif %}
+				<address>Por <a rel="author" href="/profile/{{article.user.id}}">{{article.user}}</a></address> 
+				<time pubdate datetime="{{article.date|date:"Y-m-d"}}"
+					      title="{{article.date|date:"DATE_FORMAT"}}">
+					{{article.date|date:"d/m/Y"}}
+				</time>
+			</header>
+			<section>
+				{% autoescape off %}
+					{{text}}
+				{% endautoescape %}
+			</section>
+		</article>
+		<ol>
+			{% for c in comment_list %}
+			<li>{{c.user}} {{c.date|date:"d/m/Y G:i:s"}}
+				<p>{{c.text}}</p>
+				{% if c.user.id == user.id %}
+					<form method="GET" action="/comment/{{c.id}}/delete/">
+						<input type="hidden" name="prev" value="{{request.path}}" />
+						<input type="submit" value="X" />
+					</form>
+				{% endif %}
+			</li>
+			{% endfor %}
+		</ol>
+	{% endtimezone %}
+</main>
+
+{% if user.is_authenticated %}
+
+<form method="POST" action="{{article.id}}/comment/">
+	{% csrf_token %}
+	<input type="hidden" name="prev" value="{{request.path}}" />
+	<button id="swap" type="button" onClick="button.swap(event);">Comentar</button>
+</form>
+
+{% endif %}
+
+<script type="text/javascript" src="{% static 'utils.js' %}"></script>
+<script type="text/javascript">
+text_area = new TextAreaForm("comment_text", "text_area")
+submit = new SubmitButton("Comentar")
+button = new Button(document.getElementById("swap"), "comment_form", null, [text_area, submit])
+</script>
+
+{% include "footer.html" %}

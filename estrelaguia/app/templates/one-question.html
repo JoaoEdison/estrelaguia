@@ -30,7 +30,10 @@
 
 <script type="text/javascript" src="{% static 'utils.js' %}"></script>
 <script type="text/javascript">
-button = new Button(document.getElementById("swap"), "answer_form", "Responder", "answer_text")
+text_area = new TextAreaForm("answer_text", "text_area")
+files_obj = new FileInputs("files_obj", "text_area")
+submit = new SubmitButton("Responder")
+button = new Button(document.getElementById("swap"), "answer_form", "files_obj", [text_area, submit])
 </script>
 
 {% include "footer.html" %}

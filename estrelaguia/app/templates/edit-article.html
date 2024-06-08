@@ -3,6 +3,8 @@
 
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
+    <div id="title"></div>
+    <div id="subtitle"></div>
     <div id="text"></div>
     {% for f in files %}
         <p>{{f.name}}</p>
@@ -25,8 +27,14 @@
 <script type="text/javascript" src="{% static 'utils.js' %}"></script>
 <script type="text/javascript">
 
-text_area = new TextAreaForm("question_text", "text_area", "{{question.text}}")
+title = new TextField("title", 60, 0, "{{article.title}}")
+subtitle= new TextField("subtitle", 100, 0, "{{article.subtitle}}")
+text_area = new TextAreaForm("article_text", "text_area", "{{article.text}}")
+
+document.getElementById("title").outerHTML = title.getElements()
+document.getElementById("subtitle").outerHTML = subtitle.getElements()
 document.getElementById("text").outerHTML = text_area.getElements()
+
 files_obj = new FileInputs("files_obj","text_area")
 button = new Button(document.getElementById("swap"), "files", "files_obj", null)
 

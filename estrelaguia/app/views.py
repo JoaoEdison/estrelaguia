@@ -5,6 +5,7 @@ from django import forms
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password, is_password_usable
 from django.urls import reverse
+from django.db.models import Q
 from .models import *
 import logging
 from .utils import bread
@@ -70,29 +71,34 @@ def register(req):
             return render(req, page, context)
     return render(req, page, context)
 
+def save_files(req, answer=None, article=None, question=None):
+   items = req.FILES.getlist('files')
+   for f in items:
+       fname = f.name
+       fields = req.POST.getlist(fname+'[]')
+       dot = fname.find('.')
+       fext = fname[dot:] 
+       fname = fname[:dot]
+       attach = Attachment(
+           data = f,
+           name = fname,
+           ext = fext,
+           position = fields[0],
+           width = fields[1],
+           height = fields[2],
+           centralization = fields[3],
+           answer = answer,
+           article = article,
+           question = question
+       )
+       attach.save()
+
 def questions(req):
     if req.method == 'POST' and req.user.is_authenticated:
         new_question = Question.objects.create(text=req.POST['question_text'],
                                                user=req.user)
         new_question.save()
-        items = req.FILES.getlist('files')
-        for f in items:
-            fname = f.name
-            fields = req.POST.getlist(fname+'[]')
-            dot = fname.find('.')
-            fext = fname[dot:] 
-            fname = fname[:dot]
-            attach = Attachment(
-                data = f,
-                name = fname,
-                ext = fext,
-                position = fields[0],
-                width = fields[1],
-                height = fields[2],
-                centralization = fields[3],
-                question = new_question
-            )
-            attach.save()
+        save_files(req, question=new_question)
     if req.GET.get('my') == None:
         question_list = Question.objects.order_by('-date')
     else:
@@ -122,7 +128,7 @@ def my_questions(req):
     return render(req, 'my-questions.html', context)
 
 def edit_question(req, question_id):
-    if req.method == 'POST':
+    if req.method == 'POST' and req.user.is_authenticated:
         question = Question.objects.get(pk=question_id)
         question.text = req.POST['question_text']
         question.save()
@@ -133,15 +139,17 @@ def edit_question(req, question_id):
             if parentesis > -1:
                 values = i[1]
                 attach = Attachment.objects.filter(name=field_name[:parentesis])
-                if 'on' in values:                    
-                    attach.delete()
-                else:
-                    attach.update(
-                        position = values[0],              
-                        height = values[1],
-                        width = values[2],
-                        centralization = values[3]
-                    )
+                if attach:
+                    if 'on' in values:                    
+                        attach.delete()
+                    else:
+                        attach.update(
+                            position = values[0],              
+                            height = values[1],
+                            width = values[2],
+                            centralization = values[3]
+                        )
+        save_files(req, question=question)
         return redirect(my_questions)
     previous = bread(req.path)
     previous.pop(-2)
@@ -200,4 +208,111 @@ def answer(req, question_id):
             )
             attach.save()
         return HttpResponseRedirect(req.POST['prev'])
+    return HttpResponseNotFound("Recurso não encontrado.")
+
+def articles(req):
+    if req.method == 'POST' and req.user.is_authenticated:
+        new_article = Article.objects.create(
+                                            title    = req.POST['title'],
+                                            subtitle = req.POST['subtitle'],
+                                            text     = req.POST['article_text'],
+                                            user     = req.user)
+        new_article.save()
+        save_files(req, article=new_article)
+
+    if req.GET.get('my'):
+        article_list = Article.objects.filter(user=req.user.id)
+    else:
+        article_list = Article.objects
+    pattern = req.GET.get('pattern')
+    if pattern != None and pattern != '':
+        query = Q()
+        if req.GET.get('title'):
+            query = query | Q(title__icontains=pattern)
+        if req.GET.get('subtitle'):
+            query = query | Q(subtitle__icontains=pattern)
+        if req.GET.get('text'):
+            query = query | Q(text__icontains=pattern)
+        article_list = article_list.filter(query)
+    context = {
+        'article_list' : article_list.order_by('-date'),
+        'page_name' : 'Artigos',
+        'previous_pages' : bread(req.path)
+    }
+    return render(req, 'articles.html', context)
+
+def one_article(req, article_id):
+    article = Article.objects.get(pk=article_id)
+    comments = Comment.objects.filter(article=article_id).order_by('date')
+    context = {
+        'text' : include_imgs(Attachment.objects.filter(article=article_id), article.text),
+        'article' : article,
+        'comment_list' : comments,
+        'previous_pages' : bread(req.path)
+    }
+    return render(req, 'one-article.html', context)
+
+def comment(req, article_id):
+    if req.method == 'POST' and req.user.is_authenticated:
+        new_comment = Comment.objects.create(text=req.POST['comment_text'],
+                                           article=Article.objects.get(pk=article_id),
+                                           user=req.user)
+        new_comment.save()
+        return HttpResponseRedirect(req.POST['prev'])
+    return HttpResponseNotFound("Recurso não encontrado.")
+
+def my_article_delete(req, article_id):
+    article = Article.objects.get(pk=article_id)
+    if article.user.id == req.user.id and Comment.objects.filter(article=article_id).count() == 0:
+        article.delete()
+    return redirect(my_articles)
+
+def my_articles(req):
+    article_list = Article.objects.filter(user=req.user.id).order_by('-date')
+    context = {
+        'article_list' : article_list,
+        'previous_pages' : bread(req.path)
+    }
+    return render(req, 'my-articles.html', context)
+
+def edit_article(req, article_id):
+    if req.method == 'POST' and req.user.is_authenticated:
+        article = Article.objects.get(pk=article_id)
+        article.title = req.POST['title']
+        article.subtitle = req.POST['subtitle']
+        article.text = req.POST['article_text']
+        article.save()
+        for i in req.POST.lists():
+            field_name = i[0]
+            parentesis = field_name.find("[]")
+            if parentesis > -1:
+                values = i[1]
+                attach = Attachment.objects.filter(name=field_name[:parentesis])
+                if attach:
+                    if 'on' in values:
+                        attach.delete()
+                    else:
+                        attach.update(
+                            position = values[0],              
+                            height = values[1],
+                            width = values[2],
+                            centralization = values[3]
+                        )
+        save_files(req, article=article)
+        return redirect(my_articles)
+    previous = bread(req.path)
+    previous.pop(-2)
+    context = {
+        'article' : Article.objects.get(pk=article_id),
+        'files' : Attachment.objects.filter(article=article_id),
+        'previous_pages' : previous
+    }
+    return render(req, 'edit-article.html', context)
+
+def my_comment_delete(req, comment_id):
+    if req.method == 'GET':
+        comment = Comment.objects.get(pk=comment_id)
+        if comment.user.id == req.user.id and req.user.is_authenticated:
+            comment.delete()
+        return HttpResponseRedirect(req.GET['prev'])
     return HttpResponseNotFound("Recurso não encontrado.")

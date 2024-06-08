@@ -1,0 +1,29 @@
+{% include "header.html" %}
+{% load tz %}
+
+<main>
+	{% if article_list %}
+    		{% timezone "America/Sao_Paulo" %}
+		<table id="article_table">
+			<tr>
+			    <th>Artigo</th>
+			    <th>Data</th>
+			    <th>Título</th>
+			    <th>Subtítulo</th>
+			</tr>	
+			{% for a in article_list %}
+			<tr>
+				<td><a href="/articles/{{a.id}}">{{a.id}}</a></td>
+				<td>{{a.date|date:"d/m/Y"}}</td>
+				<td>{{a.title}}</td>
+				<td>{{a.subtitle}}</td>
+				<td><a href="{{request.path}}{{a.id}}/edit/">Editar</a></td>
+				<td><a href="{{request.path}}{{a.id}}/delete/">Deletar</a></td>
+			</tr>
+			{% endfor %}
+		</table>
+		{% endtimezone %}
+	{% endif %}
+</main>
+
+{% include "footer.html" %}

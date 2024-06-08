@@ -19,7 +19,7 @@ class Answer(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
 
-class Publication(models.Model):
+class Article(models.Model):
     title = models.CharField(max_length=50)
     subtitle = models.CharField(max_length=60, blank=True)
     text = models.CharField()
@@ -30,7 +30,7 @@ class Comment(models.Model):
     text = models.CharField()
     date = models.DateTimeField(default=timezone.now)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    publication = models.ForeignKey(Publication, on_delete=models.CASCADE)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
 
 class Attachment(models.Model):
     data = models.FileField()
@@ -40,6 +40,6 @@ class Attachment(models.Model):
     centralization = models.CharField(max_length=1, null=True)
     height = models.IntegerField(null=True)
     width = models.IntegerField(null=True)
-    publication = models.ForeignKey(Publication, on_delete=models.CASCADE, null=True)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, null=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True)
