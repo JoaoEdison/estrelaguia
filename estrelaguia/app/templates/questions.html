@@ -16,7 +16,10 @@
 	<button id="swap" type="button" onClick="button.swap(event);">Perguntar</button>
 </form>
 
-<a href="{{request.path}}my-questions">Gerenciar Perguntas</a>
+<nav>
+	<a href="{{request.path}}my-questions">Gerenciar Perguntas</a>
+	<a href="{{request.path}}favorites">Favoritas</a>
+</nav>
 
 {% endif %}
 
@@ -37,7 +40,7 @@
 text_area = new TextAreaForm("question_text", "text_area")
 files_obj = new FileInputs("files_obj","text_area")
 submit = new SubmitButton("Perguntar")
-button = new Button(document.getElementById("swap"), "question_form", "files_obj", [text_area, submit])
+button = new Button("button", document.getElementById("swap"), "question_form", "files_obj", [text_area, submit])
 </script>
 
 {% include "footer.html" %}

@@ -1,0 +1,50 @@
+{% load static %}
+{% include "header.html" %}
+{% load tz %}
+
+<main>
+	{% if fav_list %}
+    		{% timezone "America/Sao_Paulo" %}
+		<table id="fav_article_table">
+			<tr>
+			    <th>Artigo</th>
+			    <th>Título</th>
+			    <th>Subtítulo</th>
+			    <th>Autor</th>
+			    <th>Data</th>
+			</tr>	
+			{% for fav in fav_list %}
+			<tr>
+				<td><a href="/articles/{{fav.article.id}}">{{fav.article.id}}</a></td>
+				<td>{{fav.article.title}}</td>
+				<td>{{fav.article.subtitle}}</td>
+				<td>{{fav.article.user}}</td>
+				<td>{{fav.article.date|date:"d/m/Y"}}</td>
+				<td><button type="button" onClick="remove_favorite(event, {{fav.article.id}})">X</button></td>
+			</tr>
+			{% endfor %}
+		</table>
+		{% endtimezone %}
+	{% endif %}
+</main>
+
+<div id="csrf"> {% csrf_token %} </div>
+
+<script type="text/javascript" src="{% static 'utils.js' %}"></script>
+<script type="text/javascript">
+
+async function remove_favorite(e, article_id) {
+	const resp = await fetch('/articles/favorites/'+article_id, {
+		method: 'DELETE',
+		headers: {
+			'X-CSRFToken': document.getElementById('csrf').children[0].value
+		},
+	})
+	if (resp.ok) {
+		e.originalTarget.parentNode.parentNode.remove()
+	}
+}
+
+</script>
+
+{% include "footer.html" %}

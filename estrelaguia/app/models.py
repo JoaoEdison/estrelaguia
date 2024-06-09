@@ -43,3 +43,47 @@ class Attachment(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE, null=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True)
+
+class ArticleUpvote(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    class Meta:
+            constraints = [
+                models.UniqueConstraint(
+                    fields=['article', 'user'], name='unique_article_user_upvote'
+                )
+            ]
+class CommentUpvote(models.Model):
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    class Meta:
+            constraints = [
+                models.UniqueConstraint(
+                    fields=['comment', 'user'], name='unique_comment_user_upvote'
+                )
+            ]
+class QuestionUpvote(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    class Meta:
+            constraints = [
+                models.UniqueConstraint(
+                    fields=['question', 'user'], name='unique_question_user_upvote'
+                )
+            ]
+class AnswerUpvote(models.Model):
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    class Meta:
+            constraints = [
+                models.UniqueConstraint(
+                    fields=['answer', 'user'], name='unique_answer_user_upvote'
+                )
+            ]
+
+class ArticleFavorite(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+class QuestionFavorite(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)

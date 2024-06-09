@@ -178,6 +178,9 @@ def one_question(req, question_id):
     context = {
         'text' : include_imgs(Attachment.objects.filter(question=question_id), question.text),
         'question_id' : question_id,
+        'likes' : QuestionUpvote.objects.filter(question=question_id).count(),
+        'upvote' : QuestionUpvote.objects.filter(question=question_id, user=req.user.id).count() > 0,
+        'favorite' : QuestionFavorite.objects.filter(question=question_id, user=req.user.id).count() > 0,
         'resp_list' : changes,
         'previous_pages' : bread(req.path)
     }
@@ -247,6 +250,9 @@ def one_article(req, article_id):
     context = {
         'text' : include_imgs(Attachment.objects.filter(article=article_id), article.text),
         'article' : article,
+        'likes' : ArticleUpvote.objects.filter(article=article_id).count(),
+        'upvote' : ArticleUpvote.objects.filter(article=article_id, user=req.user.id).count() > 0,
+        'favorite' : ArticleFavorite.objects.filter(article=article_id, user=req.user.id).count() > 0,
         'comment_list' : comments,
         'previous_pages' : bread(req.path)
     }
@@ -310,9 +316,65 @@ def edit_article(req, article_id):
     return render(req, 'edit-article.html', context)
 
 def my_comment_delete(req, comment_id):
-    if req.method == 'GET':
-        comment = Comment.objects.get(pk=comment_id)
-        if comment.user.id == req.user.id and req.user.is_authenticated:
-            comment.delete()
-        return HttpResponseRedirect(req.GET['prev'])
-    return HttpResponseNotFound("Recurso não encontrado.")
+    comment = Comment.objects.get(pk=comment_id)
+    if comment.user.id == req.user.id and req.user.is_authenticated:
+        comment.delete()
+    return HttpResponse('')
+
+def edit_comment(req, comment_id):
+    comment = Comment.objects.get(pk=comment_id)
+    if comment.user.id == req.user.id and req.user.is_authenticated:
+        comment.text = req.body.decode('utf-8')
+        comment.save()
+    return HttpResponse('')
+
+def upvote_article(req, article_id):
+    if req.method == 'POST':
+        upvote = ArticleUpvote.objects.create(article = Article.objects.get(pk=article_id),
+                                              user    = req.user)
+        upvote.save()
+    elif req.method == 'DELETE':
+        upvote = ArticleUpvote.objects.filter(article = article_id, user = req.user)
+        upvote.delete()
+    return HttpResponse('')
+def upvote_question(req, question_id):
+    if req.method == 'POST':
+        upvote = QuestionUpvote.objects.create(question = Question.objects.get(pk=question_id),
+                                               user    = req.user)
+        upvote.save()
+    elif req.method == 'DELETE':
+        upvote = QuestionUpvote.objects.filter(question = question_id, user = req.user)
+        upvote.delete()
+    return HttpResponse('')
+
+def favorite_article(req, article_id):
+    if req.method == 'POST':
+        favorite = ArticleFavorite.objects.create(article = Article.objects.get(pk=article_id),
+                                                  user    = req.user)
+        favorite.save()
+    elif req.method == 'DELETE':
+        favorite = ArticleFavorite.objects.filter(article = article_id, user = req.user)
+        favorite.delete()
+    return HttpResponse('')
+def favorite_question(req, question_id):
+    if req.method == 'POST':
+        favorite = QuestionFavorite.objects.create(question = Question.objects.get(pk=question_id),
+                                                   user    = req.user)
+        favorite.save()
+    elif req.method == 'DELETE':
+        favorite = QuestionFavorite.objects.filter(question = question_id, user = req.user)
+        favorite.delete()
+    return HttpResponse('')
+
+def favorites_list_article(req):
+    context = {
+        'fav_list' : ArticleFavorite.objects.filter(user = req.user).select_related('article').order_by('-id'),
+        'previous_pages' : bread(req.path)
+    }
+    return render(req, 'fav-articles.html', context)
+def favorites_list_question(req):
+    context = {
+        'fav_list' : QuestionFavorite.objects.filter(user = req.user).select_related('question').order_by('-id'),
+        'previous_pages' : bread(req.path)
+    }
+    return render(req, 'fav-questions.html', context)

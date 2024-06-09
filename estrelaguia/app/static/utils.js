@@ -37,6 +37,19 @@ class FormElement {
 	}
 }
 
+class RequestButton extends FormElement {
+	#button_description
+	#function_name
+	constructor(description, function_name) {
+		super()
+		this.#button_description = description
+		this.#function_name = function_name
+	}
+	getElements() {
+		return "<button type=\"button\" onClick=\""+this.#function_name+"\">"+this.#button_description+"</button>"
+	}
+}
+
 class SubmitButton extends FormElement {
 	#submit_description
 	constructor(description) {
@@ -51,13 +64,13 @@ class SubmitButton extends FormElement {
 class TextAreaForm extends FormElement {
 	#id
 	#name
-	#text
+	text
 	#last_pos
 	constructor(id, name, text="") {
 		super()
 		this.#id = id
 		this.#name = name
-		this.#text = text
+		this.text = text
 	}
 	record(e) {
 		this.#last_pos = e.target.selectionStart
@@ -68,8 +81,8 @@ class TextAreaForm extends FormElement {
 	getElements() {
 		return "<textarea id=\""+this.#id+"\" name=\""+this.#id+"\" maxlength=\"1000\"\
 			 autocomplete=\"on\" autocorrect=\"on\" autofocus required onBlur=\""+this.#name+".record(event)\">"
-			+this.#text+"</textarea><br>"
-	}	
+			+this.text+"</textarea><br>"
+	}
 }
 
 class TextField extends FormElement {
@@ -110,18 +123,23 @@ class TextField extends FormElement {
 }
 
 class Button {
+	#name
 	#prev
 	#state
 	#div
 	#last_pos
 	#other_elements
 	#files
-	constructor(element, div, files, others) {
+	constructor(name, element, div, files, others) {
+		this.#name = name
 		this.#state = 0
 		this.#prev = element
 		this.#div = div
 		this.#files = files
 		this.#other_elements = others
+	}
+	setPrev(element) {
+		this.#prev = element
 	}
 	swap(e) {
 		if (this.#state) {
@@ -133,7 +151,7 @@ class Button {
 			if (this.#other_elements)
 				for (let i=0; i < this.#other_elements.length; i++)
 					outerHtml += this.#other_elements[i].getElements()
-			outerHtml += "<button type=\"button\" onClick=\"button.swap(event)\">Cancelar</button><br>"
+			outerHtml += "<button type=\"button\" onClick=\""+this.#name+".swap(event)\">Cancelar</button><br>"
 			if (this.#files) {
 				outerHtml += "<input id=\"input_files\" type=\"file\" name=\"files\" accept=\"image/*\" onChange=\""+this.#files+".createCustomFields(event)\" multiple />\
 			                     <div id=\"files_form\"></div>\

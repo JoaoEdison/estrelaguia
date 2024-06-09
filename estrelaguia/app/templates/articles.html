@@ -23,7 +23,10 @@
 	<button id="swap" type="button" onClick="button.swap(event);">Publicar</button>
 </form>
 
-<a href="{{request.path}}my-articles">Gerenciar Artigos</a>
+<nav>
+	<a href="{{request.path}}my-articles">Gerenciar Artigos</a>
+	<a href="{{request.path}}favorites">Favoritos</a>
+</nav>
 
 {% endif %}
 
@@ -61,7 +64,7 @@ files_obj = new FileInputs("files_obj","text_area")
 submit = new SubmitButton("Publicar")
 title = new TextField("title", "Título: ", true, 60)
 subtitle= new TextField("subtitle", "Subtítulo: ", false, 100)
-button = new Button(document.getElementById("swap"), "article_form", "files_obj", [title, subtitle, text_area, submit])
+button = new Button("button", document.getElementById("swap"), "article_form", "files_obj", [title, subtitle, text_area, submit])
 </script>
 
 {% include "footer.html" %}

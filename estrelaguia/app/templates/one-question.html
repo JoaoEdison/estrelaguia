@@ -2,12 +2,27 @@
 {% include "header.html" %}
 {% load tz %}
 
+<p id="likes">{{likes}} avaliaram positivamente a questão.</p>
+
+{% if user.is_authenticated %}
+	{% if favorite %}
+		<button type="button" onClick="remove_favorite(event, '/questions/favorites/{{question_id}}', token)">Remover dos favoritos</button>
+	{% else %}
+		<button type="button" onClick="favorite(event, '/questions/favorites/{{question_id}}', token)">Favoritar</button>
+	{% endif %}
+	{% if upvote %}
+		<button type="button" onClick="remove_up(event, '/questions/upvote/{{question_id}}', token)">Remover avaliação</button>
+	{% else %}
+		<button type="button" onClick="upvote(event, '/questions/upvote/{{question_id}}', token)">Avaliar positivamente</button>
+	{% endif %}
+{% endif %}
+
 {% autoescape off %}
 	{{text}}
 {% endautoescape %}
 
 {% if user.is_authenticated %}
-<form action="{{question_id}}/answer/" method="POST" enctype="multipart/form-data">
+<form id="answerForm" action="{{question_id}}/answer/" method="POST" enctype="multipart/form-data">
 	{% csrf_token %}
 	<input type="hidden" name="prev" value="{{request.path}}" />
 	<button id="swap" type="button" onClick="button.swap(event);">Responder</button>
@@ -29,11 +44,23 @@
 {% endif %}
 
 <script type="text/javascript" src="{% static 'utils.js' %}"></script>
+<script type="text/javascript" src="{% static 'simple-requests.js' %}"></script>
+
 <script type="text/javascript">
 text_area = new TextAreaForm("answer_text", "text_area")
 files_obj = new FileInputs("files_obj", "text_area")
 submit = new SubmitButton("Responder")
-button = new Button(document.getElementById("swap"), "answer_form", "files_obj", [text_area, submit])
+button = new Button("button", document.getElementById("swap"), "answer_form", "files_obj", [text_area, submit])
+
+const likes = document.getElementById('likes')
+const token = document.getElementById('answerForm')[0].value
+
+upButton = new RequestButton("Avaliar positivamente", "upvote(event, '/questions/upvote/{{question_id}}', token)")
+downButton = new RequestButton("Remover avaliação", "remove_up(event, '/questions/upvote/{{question_id}}', token)")
+
+favButton = new RequestButton("Favoritar", "favorite(event, '/questions/favorites/{{question_id}}', token)")
+removeFavButton = new RequestButton("Remover dos favoritos", "remove_favorite(event, '/questions/favorites/{{question_id}}', token)")
+
 </script>
 
 {% include "footer.html" %}
