@@ -53,7 +53,10 @@ submit = new SubmitButton("Responder")
 button = new Button("button", document.getElementById("swap"), "answer_form", "files_obj", [text_area, submit])
 
 const likes = document.getElementById('likes')
-const token = document.getElementById('answerForm')[0].value
+let answerForm = document.getElementById('answerForm')
+var token
+if (answerForm != null)
+	token = answerForm[0].value
 
 upButton = new RequestButton("Avaliar positivamente", "upvote(event, '/questions/upvote/{{question_id}}', token)")
 downButton = new RequestButton("Remover avaliação", "remove_up(event, '/questions/upvote/{{question_id}}', token)")

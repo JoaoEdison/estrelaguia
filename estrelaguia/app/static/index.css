@@ -1,6 +1,42 @@
+:root {
+	--color1-dark: #020105;
+	--color2-dark: #1D2640;
+	--color3-dark: #0E1525;
+	--color4-dark: #2F375B;
+	--color5-dark: #43477C;
+	--color6-dark: #685E8E;
+
+	--color1-bright: #7CB5D1;
+	--color2-bright: #74C3FF;
+	--color3-bright: #97D2FE;
+	--color4-bright: #C0E3FF;
+	--color5-bright: #8080FF;
+	--color6-bright: #55AAAA;
+}
+
 body {
     margin: 0;
     padding: 0 64px;
+}
+
+#logo {
+	line-height: 64px;
+	position: relative;
+	background-color: black;
+	padding: 4px;
+}
+
+#logo_name {
+	padding-left: 72px;
+	margin: 0;
+	color: white;
+	font-size: 32px;
+}
+
+#logo_icon {
+	position: absolute;
+	top: 0;
+	height: 64px;
 }
 
 /* Navegação Principal */
@@ -9,26 +45,32 @@ body {
     list-style-type: none;
     padding: 5px 0;
     margin: 0;
-    background-color: cadetblue;
+    background-color: var(--color5-bright);
 }
 
 #main_menu li {
+    background-image: url(icon.png);
+    background-position: 0.4rem 0;
+    background-size: 1rem 1rem;
+    background-repeat: no-repeat;
     display: inline-block;
-    padding: 0 15px;
+    padding: 0 22px;
 }
 
 #main_menu a:link, #main_menu a:visited {
     text-decoration: none;
+    color: white;
 }
 #main_menu a:hover, #main_menu a:active {
     text-decoration: underline;
+    color: var(--color1-dark);
 }
 
 #crumbs {
     list-style-type: none;
     padding: 0;
     margin: 0;
-    background-color: azure;
+    background-color: var(--color4-bright);
 }
 
 #crumbs li {

@@ -2,14 +2,19 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
+	<meta http-equiv="Content-Type" content="text/html" />
 	<meta charset="UTF-8" />
+	<link rel="shortcut icon" type="image/png" href="{% static 'icon.png' %}">
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>Estrela Guia{% if page_name %} - {{page_name}} {% endif %}</title>
 	<link rel="stylesheet" href="{% static 'index.css' %}" />
 </head>
 <body>
 	<header>
-		<p><img src="{% static 'logo.png' %}" alt="Estrela Guia"></p>
+		<div id="logo">
+			<img id="logo_icon" src="{% static 'icon.png' %}" alt="Estrela Guia">
+			<p id="logo_name">Estrela Guia</p>
+		</div>
 		<nav>
 			<ul id='main_menu'>
 				<li><a href='{{req.get_host}}/articles/'>Artigos</a></li>
@@ -18,7 +23,7 @@
 					<li><a href='{{req.get_host}}/profile/'>Meu Perfil</a></li>
 					<li><a href='{{req.get_host}}/leave/'>Sair</a></li>
 				{% else %}
-					<li><a href='{{req.get_host}}/enter/'>Login</a></li>
+					<li><a href='{{req.get_host}}/enter/'>Entrar</a></li>
 				{% endif %}
 			</ul>
 			<ul id='crumbs'>
