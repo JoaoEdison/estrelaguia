@@ -2,37 +2,42 @@
 {% include "header.html" %}
 {% load tz %}
 
-<form method="GET">
-	<input type="search" name="pattern">
-	{% if user.is_authenticated %}
-	<label>Minhas Perguntas: <input type="checkbox" name="my"></label>
-	{% endif %}
-	<input type="submit" value="Pesquisar" />
-</form>
-
-{% if user.is_authenticated %}
-<form method="POST" enctype="multipart/form-data">
-	{% csrf_token %}
-	<button id="swap" type="button" onClick="button.swap(event);">Perguntar</button>
-</form>
-
-<nav>
-	<a href="{{request.path}}my-questions">Gerenciar Perguntas</a>
-	<a href="{{request.path}}favorites">Favoritas</a>
-</nav>
-
-{% endif %}
-
 <main>
-	<ul>
-		{% if question_list %}
-		{% timezone "America/Sao_Paulo" %}
-			{% for q in question_list %}
-			<li><a href="{{q.id}}">{{q.id}}</a> {{q.user}} {{q.date|date:"d/m/Y G:i:s"}} {{q.text|striptags|truncatechars:100}}</li>
-			{% endfor %}
-		{% endtimezone %}
-		{% endif %}
-	</ul>
+	<div id="search_bar">
+		<form method="GET">
+			<input type="search" name="pattern">
+			{% if user.is_authenticated %}
+			<label>Minhas Perguntas: <input type="checkbox" name="my"></label>
+			{% endif %}
+			<input type="submit" value="Pesquisar" />
+		</form>
+	</div>
+	
+	{% if user.is_authenticated %}
+	<nav id="manage-submissions">
+		<a href="{{request.path}}my-questions">Gerenciar Perguntas</a>
+		<a href="{{request.path}}favorites">Favoritas</a>
+	</nav>
+	{% endif %}
+
+	<hr style="margin-left: 10px; margin-right: 10px;">
+
+	{% if user.is_authenticated %}
+	<form method="POST" enctype="multipart/form-data" id="form-submission">
+		{% csrf_token %}
+		<button id="swap" type="button" onClick="button.swap(event);">Perguntar</button>
+	</form>
+	{% endif %}
+
+	{% if question_list %}
+		<ul>		
+			{% timezone "America/Sao_Paulo" %}
+				{% for q in question_list %}
+					<li><a href="{{q.id}}">{{q.id}}</a> {{q.user}} {{q.date|date:"d/m/Y G:i:s"}} {{q.text|striptags|truncatechars:100}}</li>
+				{% endfor %}
+			{% endtimezone %}		
+		</ul>
+	{% endif %}
 </main>
 
 <script type="text/javascript" src="{% static 'utils.js' %}"></script>

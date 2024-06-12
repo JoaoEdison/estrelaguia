@@ -2,35 +2,39 @@
 {% include "header.html" %}
 {% load tz %}
 
-<form method="GET">
-	<input type="search" name="pattern" />
-	<p>Pesquisar em</p>
-	<label>Título: <input type="checkbox" name="title" checked></label>
-	<label>Subtítulo: <input type="checkbox" name="subtitle" checked></label>
-	<label>Texto: <input type="checkbox" name="text" checked></label>
-	<br>
-	{% if user.is_authenticated %}
-	<label>Minhas Publicações: <input type="checkbox" name="my"></label>
-	<br>
-	{% endif %}
-	<input type="submit" value="Pesquisar" />
-</form>
-
-{% if user.is_authenticated %}
-
-<form method="POST" enctype="multipart/form-data">
-	{% csrf_token %}
-	<button id="swap" type="button" onClick="button.swap(event);">Publicar</button>
-</form>
-
-<nav>
-	<a href="{{request.path}}my-articles">Gerenciar Artigos</a>
-	<a href="{{request.path}}favorites">Favoritos</a>
-</nav>
-
-{% endif %}
-
 <main>
+    <div id="search_bar">
+		<form method="GET">
+			<input type="search" name="pattern" />
+			<p>Pesquisar em</p>
+			<label>Título: <input type="checkbox" name="title" checked></label>
+			<label>Subtítulo: <input type="checkbox" name="subtitle" checked></label>
+			<label>Texto: <input type="checkbox" name="text" checked></label>
+			<br>
+			{% if user.is_authenticated %}
+			<label>Minhas Publicações: <input type="checkbox" name="my"></label>
+			<br>
+			{% endif %}
+			<input type="submit" value="Pesquisar" />
+		</form>
+	</div>
+
+	{% if user.is_authenticated %}
+	<nav id="manage-submissions">
+		<a href="{{request.path}}my-articles">Gerenciar Artigos</a>
+		<a href="{{request.path}}favorites">Favoritos</a>
+	</nav>
+	{% endif %}
+
+	<hr style="margin-left: 10px; margin-right: 10px;">
+
+	{% if user.is_authenticated %}
+	<form method="POST" enctype="multipart/form-data" id="form-submission">
+		{% csrf_token %}
+		<button id="swap" type="button" onClick="button.swap(event);">Publicar</button>
+	</form>
+	{% endif %}
+
 	{% if article_list %}
 	{% timezone "America/Sao_Paulo" %}
 		<ul>
