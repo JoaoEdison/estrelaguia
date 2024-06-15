@@ -15,11 +15,41 @@
 }
 
 body {
+    background-color: var(--color3-dark);
     margin: 0;
 }
 
 main {
-	position: relative;
+    position: relative;
+    padding: 10px;
+    color: #cccccc;
+}
+
+ul {
+    margin: 0;
+}
+
+input,textarea {
+	background-color: var(--color1-dark);
+	color: white;
+}
+
+button,input[type=button],input[type=submit] {
+	color: black;
+	padding: 4px 8px;
+	border-radius: 0;
+	border: none;
+	background-color: var(--color2-bright);
+}
+button:hover,input[type=button]:hover,input[type=submit]:hover {
+	background-color: white;
+}
+
+main a {
+	color: var(--color2-bright);
+}
+main a:hover {
+	color: var(--color4-bright);
 }
 
 #logo {
@@ -34,6 +64,7 @@ main {
 	margin: 0;
 	color: white;
 	font-size: 32px;
+	text-shadow: white 1px 1px 4px;
 }
 
 #logo_icon {
@@ -87,6 +118,8 @@ main {
 	top: 0;
 	right: 0;
 	padding: 10px;
+	background-color: var(--color5-dark);
+	border: 2px solid var(--color1-dark);
 }
 
 #manage-submissions {
@@ -99,4 +132,9 @@ main {
 
 #form-submission {
 	padding: 10px;
+}
+
+#likes {
+	color: yellow;
+	text-shadow: yellow 1px 1px 8px;
 }

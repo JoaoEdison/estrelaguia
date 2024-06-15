@@ -2,46 +2,50 @@
 {% include "header.html" %}
 {% load tz %}
 
-<p id="likes">{{likes}} avaliaram positivamente a questão.</p>
+<main>
 
-{% if user.is_authenticated %}
-	{% if favorite %}
-		<button type="button" onClick="remove_favorite(event, '/questions/favorites/{{question_id}}', token)">Remover dos favoritos</button>
-	{% else %}
-		<button type="button" onClick="favorite(event, '/questions/favorites/{{question_id}}', token)">Favoritar</button>
+	<p id="likes">{{likes}} avaliaram positivamente a questão.</p>
+	
+	{% if user.is_authenticated %}
+		{% if favorite %}
+			<button type="button" onClick="remove_favorite(event, '/questions/favorites/{{question_id}}', token)">Remover dos favoritos</button>
+		{% else %}
+			<button type="button" onClick="favorite(event, '/questions/favorites/{{question_id}}', token)">Favoritar</button>
+		{% endif %}
+		{% if upvote %}
+			<button type="button" onClick="remove_up(event, '/questions/upvote/{{question_id}}', token)">Remover avaliação</button>
+		{% else %}
+			<button type="button" onClick="upvote(event, '/questions/upvote/{{question_id}}', token)">Avaliar positivamente</button>
+		{% endif %}
 	{% endif %}
-	{% if upvote %}
-		<button type="button" onClick="remove_up(event, '/questions/upvote/{{question_id}}', token)">Remover avaliação</button>
-	{% else %}
-		<button type="button" onClick="upvote(event, '/questions/upvote/{{question_id}}', token)">Avaliar positivamente</button>
+	
+	{% autoescape off %}
+		{{text}}
+	{% endautoescape %}
+	
+	{% if user.is_authenticated %}
+	<form id="answerForm" action="{{question_id}}/answer/" method="POST" enctype="multipart/form-data">
+		{% csrf_token %}
+		<input type="hidden" name="prev" value="{{request.path}}" />
+		<button id="swap" type="button" onClick="button.swap(event);">Responder</button>
+	</form>
 	{% endif %}
-{% endif %}
+	
+	{% if resp_list %}
+	<ol>
+		{% timezone "America/Sao_Paulo" %}
+			{% for resp in resp_list %}
+			<li>{{resp.user}} {{resp.date|date:"d/m/Y G:i:s"}}
+				{% autoescape off %}
+					{{resp.text}}
+				{% endautoescape %}
+			</li>
+			{% endfor %}
+		{% endtimezone %}
+	</ol>
+	{% endif %}
 
-{% autoescape off %}
-	{{text}}
-{% endautoescape %}
-
-{% if user.is_authenticated %}
-<form id="answerForm" action="{{question_id}}/answer/" method="POST" enctype="multipart/form-data">
-	{% csrf_token %}
-	<input type="hidden" name="prev" value="{{request.path}}" />
-	<button id="swap" type="button" onClick="button.swap(event);">Responder</button>
-</form>
-{% endif %}
-
-{% if resp_list %}
-<ol>
-	{% timezone "America/Sao_Paulo" %}
-		{% for resp in resp_list %}
-		<li>{{resp.user}} {{resp.date|date:"d/m/Y G:i:s"}}
-			{% autoescape off %}
-				{{resp.text}}
-			{% endautoescape %}
-		</li>
-		{% endfor %}
-	{% endtimezone %}
-</ol>
-{% endif %}
+</main>
 
 <script type="text/javascript" src="{% static 'utils.js' %}"></script>
 <script type="text/javascript" src="{% static 'simple-requests.js' %}"></script>

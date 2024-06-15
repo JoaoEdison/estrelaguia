@@ -1,35 +1,39 @@
 {% load static %}
 {% include "header.html" %}
 
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    <div id="title"></div>
-    <div id="subtitle"></div>
-    <div id="text"></div>
-    {% for f in files %}
-        <p>{{f.name}}</p>
-        <input id="position_file" type="number" onClick="setPositionTextarea(text_area.getLastPos(),event)"
-			 name="{{f.name}}[]" value="{{f.position}}" required/>
-		<input type="number" name="{{f.name}}[]" value="{{f.height}}" required/>
-		<input type="number" name="{{f.name}}[]" value="{{f.width}}" required/>
+<main>
+	<form method="POST" enctype="multipart/form-data">
+	    {% csrf_token %}
+	    <div id="title"></div>
+	    <div id="subtitle"></div>
+	    <div id="text"></div>
+	    {% for f in files %}
+	        <p>{{f.name}}</p>
+	        <input id="position_file" type="number" onClick="setPositionTextarea(text_area.getLastPos(),event)"
+				 name="{{f.name}}[]" value="{{f.position}}" required/>
+			<input type="number" name="{{f.name}}[]" value="{{f.height}}" required/>
+			<input type="number" name="{{f.name}}[]" value="{{f.width}}" required/>
+		        <br>
+			<label><input type="radio" value="L" name="{{f.name}}[]" checked/>Esquerda</label>
+			<label><input type="radio" value="C" name="{{f.name}}[]"/>Centro</label>
+			<label><input type="radio" value="R" name="{{f.name}}[]"/>Direita</label>
 	        <br>
-		<label><input type="radio" value="L" name="{{f.name}}[]" checked/>Esquerda</label>
-		<label><input type="radio" value="C" name="{{f.name}}[]"/>Centro</label>
-		<label><input type="radio" value="R" name="{{f.name}}[]"/>Direita</label>
-        <br>
-        <label>Remover: <input type="checkbox" name="{{f.name}}[]"></label>
-        <br>
-    {% endfor %}
-    <button id="swap" type="button" onClick="button.swap(event);">Adicionar Novas Imagens</button>
-    <input type="submit" value="Salvar" />
-</form>
+	        <label>Remover: <input type="checkbox" name="{{f.name}}[]"></label>
+	        <br>
+	    {% endfor %}
+	    <button id="swap" type="button" onClick="button.swap(event);">Adicionar Novas Imagens</button>
+	    <input type="submit" value="Salvar" />
+	</form>
+</main>
 
 <script type="text/javascript" src="{% static 'utils.js' %}"></script>
 <script type="text/javascript">
 
-title = new TextField("title", 60, 0, "{{article.title}}")
-subtitle= new TextField("subtitle", 100, 0, "{{article.subtitle}}")
-text_area = new TextAreaForm("article_text", "text_area", "{{article.text}}")
+title = new TextField("title", "Título", true, 60, 0, "{{article.title}}")
+subtitle= new TextField("subtitle", "Subtítulo", true, 100, 0, "{{article.subtitle}}")
+{% spaceless %}
+text_area = new TextAreaForm("article_text", "text_area", "{{article.text|linebreaks}}", 10000)
+{% endspaceless %}
 
 document.getElementById("title").outerHTML = title.getElements()
 document.getElementById("subtitle").outerHTML = subtitle.getElements()

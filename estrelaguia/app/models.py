@@ -20,8 +20,8 @@ class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
 
 class Article(models.Model):
-    title = models.CharField(max_length=50)
-    subtitle = models.CharField(max_length=60, blank=True)
+    title = models.CharField(max_length=128)
+    subtitle = models.CharField(max_length=256, blank=True)
     text = models.CharField()
     date = models.DateField(default=timezone.now)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
@@ -34,7 +34,7 @@ class Comment(models.Model):
 
 class Attachment(models.Model):
     data = models.FileField()
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=256)
     ext = models.CharField(max_length=8)
     position = models.IntegerField(null=True)
     centralization = models.CharField(max_length=1, null=True)

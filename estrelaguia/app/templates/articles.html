@@ -6,14 +6,12 @@
     <div id="search_bar">
 		<form method="GET">
 			<input type="search" name="pattern" />
-			<p>Pesquisar em</p>
+			<p style="display:inline-block;margin:0;">Pesquisar em:</p>
 			<label>Título: <input type="checkbox" name="title" checked></label>
 			<label>Subtítulo: <input type="checkbox" name="subtitle" checked></label>
 			<label>Texto: <input type="checkbox" name="text" checked></label>
-			<br>
 			{% if user.is_authenticated %}
 			<label>Minhas Publicações: <input type="checkbox" name="my"></label>
-			<br>
 			{% endif %}
 			<input type="submit" value="Pesquisar" />
 		</form>
@@ -24,11 +22,9 @@
 		<a href="{{request.path}}my-articles">Gerenciar Artigos</a>
 		<a href="{{request.path}}favorites">Favoritos</a>
 	</nav>
-	{% endif %}
-
-	<hr style="margin-left: 10px; margin-right: 10px;">
-
-	{% if user.is_authenticated %}
+	
+	<hr style="margin-left: 10px; margin-right: 10px; width: 500px">
+	
 	<form method="POST" enctype="multipart/form-data" id="form-submission">
 		{% csrf_token %}
 		<button id="swap" type="button" onClick="button.swap(event);">Publicar</button>
@@ -63,7 +59,7 @@
 
 <script type="text/javascript" src="{% static 'utils.js' %}"></script>
 <script type="text/javascript">
-text_area = new TextAreaForm("article_text", "text_area")
+text_area = new TextAreaForm("article_text", "text_area", "", 10000)
 files_obj = new FileInputs("files_obj","text_area")
 submit = new SubmitButton("Publicar")
 title = new TextField("title", "Título: ", true, 60)

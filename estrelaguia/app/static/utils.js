@@ -66,11 +66,13 @@ class TextAreaForm extends FormElement {
 	#name
 	text
 	#last_pos
-	constructor(id, name, text="") {
+	#maxlength
+	constructor(id, name, text="", maxlength=1000) {
 		super()
 		this.#id = id
 		this.#name = name
 		this.text = text
+		this.#maxlength = maxlength
 	}
 	record(e) {
 		this.#last_pos = e.target.selectionStart
@@ -78,8 +80,15 @@ class TextAreaForm extends FormElement {
 	getLastPos() {
 		return this.#last_pos
 	}
+	#getCols() {
+		return parseInt(Math.sqrt(this.#maxlength))
+	}
+	#getRows() {
+		return parseInt(this.#getCols() / 4)
+	}
 	getElements() {
-		return "<textarea id=\""+this.#id+"\" name=\""+this.#id+"\" maxlength=\"1000\"\
+		return "<textarea id=\""+this.#id+"\" name=\""+this.#id+"\" maxlength=\""+this.#maxlength+"\"\
+		         rows=\""+this.#getRows()+"\" cols=\""+this.#getCols()+"\"\
 			 autocomplete=\"on\" autocorrect=\"on\" autofocus required onBlur=\""+this.#name+".record(event)\">"
 			+this.text+"</textarea><br>"
 	}

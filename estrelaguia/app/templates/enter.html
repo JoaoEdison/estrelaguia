@@ -3,7 +3,7 @@
 <main>
 	<h1>Entrar</h1>
 	{% if error %}
-		<p>{{error}}</p>
+		<p style="background-color: red;color: white;border-radius: 8px;padding: 8px;">{{error}}</p>
 	{% endif %}
 	<form method="POST">
 		{% csrf_token %}

@@ -18,11 +18,9 @@
 		<a href="{{request.path}}my-questions">Gerenciar Perguntas</a>
 		<a href="{{request.path}}favorites">Favoritas</a>
 	</nav>
-	{% endif %}
 
-	<hr style="margin-left: 10px; margin-right: 10px;">
+	<hr style="margin-left: 10px; margin-right: 10px; width: 500px">
 
-	{% if user.is_authenticated %}
 	<form method="POST" enctype="multipart/form-data" id="form-submission">
 		{% csrf_token %}
 		<button id="swap" type="button" onClick="button.swap(event);">Perguntar</button>

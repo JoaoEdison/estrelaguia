@@ -8,9 +8,18 @@ from django.urls import reverse
 from django.db.models import Q
 from .models import *
 import logging
+from html_sanitizer import Sanitizer, sanitizer
 from .utils import bread
 
 logger = logging.getLogger(__name__)
+
+sanitizer_settings = dict(sanitizer.DEFAULT_SETTINGS)
+
+sanitizer_settings['tags'].add('img')
+sanitizer_settings['empty'].add('img')
+sanitizer_settings['attributes'].update({'img' : ('src','width','height','alt',)})
+
+sanitizer_html = Sanitizer(settings=sanitizer_settings)
 
 class LoginForm(forms.Form):
     email = forms.EmailField()
@@ -248,7 +257,7 @@ def one_article(req, article_id):
     article = Article.objects.get(pk=article_id)
     comments = Comment.objects.filter(article=article_id).order_by('date')
     context = {
-        'text' : include_imgs(Attachment.objects.filter(article=article_id), article.text),
+        'text' : sanitizer_html.sanitize(include_imgs(Attachment.objects.filter(article=article_id), article.text)),
         'article' : article,
         'likes' : ArticleUpvote.objects.filter(article=article_id).count(),
         'upvote' : ArticleUpvote.objects.filter(article=article_id, user=req.user.id).count() > 0,

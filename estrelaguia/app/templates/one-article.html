@@ -33,7 +33,7 @@
 			</header>
 			<section>
 				{% autoescape off %}
-					{{text}}
+					{{text|linebreaks}}
 				{% endautoescape %}
 			</section>
 		</article>
@@ -49,17 +49,18 @@
 			{% endfor %}
 		</ol>
 	{% endtimezone %}
+
+
+	{% if user.is_authenticated %}
+	
+		<form id="commentForm" method="POST" action="{{article.id}}/comment/">
+			{% csrf_token %}
+			<input type="hidden" name="prev" value="{{request.path}}" />
+			<button id="swap" type="button" onClick="button.swap(event);">Comentar</button>
+		</form>
+	
+	{% endif %}
 </main>
-
-{% if user.is_authenticated %}
-
-<form id="commentForm" method="POST" action="{{article.id}}/comment/">
-	{% csrf_token %}
-	<input type="hidden" name="prev" value="{{request.path}}" />
-	<button id="swap" type="button" onClick="button.swap(event);">Comentar</button>
-</form>
-
-{% endif %}
 
 <script type="text/javascript" src="{% static 'utils.js' %}"></script>
 <script type="text/javascript" src="{% static 'simple-requests.js' %}"></script>
