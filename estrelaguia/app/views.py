@@ -1,11 +1,11 @@
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect
 from django.template import loader
 from django import forms
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password, is_password_usable
 from django.urls import reverse
-from django.db.models import Q
+from django.db.models import Q, Count
 from .models import *
 import logging
 from html_sanitizer import Sanitizer, sanitizer
@@ -17,7 +17,7 @@ sanitizer_settings = dict(sanitizer.DEFAULT_SETTINGS)
 
 sanitizer_settings['tags'].add('img')
 sanitizer_settings['empty'].add('img')
-sanitizer_settings['attributes'].update({'img' : ('src','width','height','alt',)})
+sanitizer_settings['attributes'].update({'img' : ('src','width','height','alt','style')})
 
 sanitizer_html = Sanitizer(settings=sanitizer_settings)
 
@@ -31,7 +31,12 @@ class RegisterForm(LoginForm):
 
 def index(req):
     template = loader.get_template("index.html")
-    context = { 'question_list' :  Question.objects.order_by('-date')[:10] }
+    question_list = QuestionUpvote.objects.select_related('question').values('question', 'question__user__username', 'question__text', 'question__id').\
+            annotate(likes=Count('question')).order_by('-question__date')[:10]
+    context = {
+        'question_list' : question_list,
+        'article_list' : Article.objects.order_by('-date')[:10]
+    }
     return HttpResponse(template.render(context, req))
 
 def enter(req):
@@ -172,7 +177,12 @@ def edit_question(req, question_id):
 def include_imgs(objs, text):
     offset = 0
     for i in objs.all():
-        img_tag = f"<img width=\"{i.width}\" height=\"{i.height}\" src=\"{i.data.url}\" />"
+        style = 'display: block; margin: auto;'
+        if i.centralization == 'L':
+            style = 'float: left;' 
+        elif i.centralization == 'R':
+            style = 'float: right;'
+        img_tag = f"<img width=\"{i.width}\" height=\"{i.height}\" src=\"{i.data.url}\" style=\"{style}\" />"
         text = text[:i.position+offset] + img_tag + text[i.position+offset:]
         offset += len(img_tag)
     return text
@@ -182,7 +192,7 @@ def one_question(req, question_id):
     answers = Answer.objects.filter(question=question_id).order_by('date')
     changes = []
     for a in answers.all():
-        a.text = include_imgs(Attachment.objects.filter(answer=a.id), a.text)
+        a.text = sanitizer_html.sanitize(include_imgs(Attachment.objects.filter(answer=a.id), a.text))
         changes.append(a)
     context = {
         'text' : include_imgs(Attachment.objects.filter(question=question_id), question.text),
@@ -220,6 +230,27 @@ def answer(req, question_id):
             )
             attach.save()
         return HttpResponseRedirect(req.POST['prev'])
+    return HttpResponseNotFound("Recurso não encontrado.")
+
+def answer_text(req, answer_id):
+    if req.method == 'GET':
+        return JsonResponse({'text' : Answer.objects.get(pk=answer_id).text})
+    return HttpResponseNotFound("Recurso não encontrado.")
+
+def my_answer_delete(req, answer_id):
+    answer = Answer.objects.get(pk=answer_id)
+    if answer.user.id == req.user.id and req.user.is_authenticated:
+        answer.delete()
+    return HttpResponse('')
+
+def edit_answer(req, answer_id):
+    if req.method == 'PUT':
+        answer = Answer.objects.get(pk=answer_id)
+        if answer.user.id == req.user.id and req.user.is_authenticated:
+            text = req.body.decode('utf-8')
+            answer.text = text
+            answer.save()
+        return HttpResponse('')
     return HttpResponseNotFound("Recurso não encontrado.")
 
 def articles(req):

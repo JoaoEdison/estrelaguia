@@ -16,7 +16,7 @@
 					{{article.date|date:"d/m/Y"}}
 				</time>
 				
-				<p id="likes">{{likes}} avaliaram positivamente o artigo.</p>
+				<p id="nlikes" class="likes">{{likes}} avaliaram positivamente o artigo.</p>
 
 				{% if user.is_authenticated %}
 					{% if favorite %}
@@ -37,6 +37,7 @@
 				{% endautoescape %}
 			</section>
 		</article>
+		{% if comment_list %}
 		<ol>
 			{% for c in comment_list %}
 			<li data-id="{{c.id}}">{{c.user}} {{c.date|date:"d/m/Y G:i:s"}}
@@ -48,17 +49,16 @@
 			</li>
 			{% endfor %}
 		</ol>
+		{% endif %}
 	{% endtimezone %}
 
 
 	{% if user.is_authenticated %}
-	
-		<form id="commentForm" method="POST" action="{{article.id}}/comment/">
+		<form id="commentForm" method="POST" action="{{article.id}}/comment/" style="clear:both; padding:10px;">
 			{% csrf_token %}
 			<input type="hidden" name="prev" value="{{request.path}}" />
 			<button id="swap" type="button" onClick="button.swap(event);">Comentar</button>
 		</form>
-	
 	{% endif %}
 </main>
 
@@ -75,26 +75,26 @@ editSend = new RequestButton("Salvar", "updateComment(event)")
 editButton = new Button("editButton", null, "edit_form", null, [editText, editSend])
 
 function editComment(e) {
-	editText.text = e.originalTarget.parentNode.children[0].innerHTML
-	editButton.setPrev(e.originalTarget)
+	editText.text = e.target.parentNode.children[0].innerHTML
+	editButton.setPrev(e.target)
 	editButton.swap(e)
 }
 
 async function deleteComment(e) {
-	const resp = await fetch('/comment/'+e.originalTarget.parentNode.dataset.id+'/delete/', {
+	const resp = await fetch('/comment/'+e.target.parentNode.dataset.id+'/delete/', {
 		method: 'DELETE',
 		headers: {
 			'X-CSRFToken': document.getElementById('commentForm')[0].value
 		}
 	})
 	if (resp.ok)
-		e.originalTarget.parentNode.remove()
+		e.target.parentNode.remove()
 }
 
 async function updateComment(e) {
-	const update = e.originalTarget.parentNode.children[0].value
+	const update = e.target.parentNode.children[0].value
 	params = new URLSearchParams()
-	const resp = await fetch('/comment/'+e.originalTarget.parentNode.parentNode.dataset.id+'/edit/', {
+	const resp = await fetch('/comment/'+e.target.parentNode.parentNode.dataset.id+'/edit/', {
 		method: 'PUT',
 		headers: {
 			'X-CSRFToken': document.getElementById('commentForm')[0].value
@@ -102,12 +102,12 @@ async function updateComment(e) {
 		body: update
 	})
 	if (resp.ok) {
-		e.originalTarget.parentNode.parentNode.children[0].innerHTML = update
+		e.target.parentNode.parentNode.children[0].innerHTML = update
 		editButton.swap(e)
 	}
 }
 
-const likes = document.getElementById('likes')
+const likes = document.getElementById('nlikes')
 const token = document.getElementById('commentForm')[0].value
 
 upButton = new RequestButton("Avaliar positivamente", "upvote(event, '/articles/upvote/{{article.id}}', token)")

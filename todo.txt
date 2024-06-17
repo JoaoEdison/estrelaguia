@@ -1,1 +1,1 @@
-
+https://medium.com/django-unleashed/effortless-django-dumpdata-tutorial-backing-up-and-transferring-data-in-your-real-project-c1137a847f23

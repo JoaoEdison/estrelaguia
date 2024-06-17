@@ -1,24 +1,52 @@
+{% load static %}
 {% include "header.html" %}
+{% load tz %}
+
 <main>
-</main>
-<aside>
-	<ul>
-		{% if question_list %}
-			{% for question in question_list %}
-				<li>{{question.id}}</li>
+	<h1>
+	{% if user.is_authenticated %}
+	Olá, {{user}}. Seja bem-vindo(a)!
+	{% else %}
+	Olá, Seja bem-vindo(a)!
+	{% endif %}
+	</h1>
+	<div style="float: left; width: 60%;">
+		<img src="{% static 'ceu-noturno.jpg' %}" style="width: 100%;"/>
+		<section>
+		{% if article_list %}
+		{% timezone "America/Sao_Paulo" %}
+			<ul>
+			{% for a in article_list %}
+			<li>
+					<article>
+						<header>
+						<h2><a href="articles/{{a.id}}">{{a.title}}</a></h2>
+						{% if a.subtitle %}
+							<h3>{{a.subtitle}}</h3>
+						{% endif %}
+						<address>Por <a rel="author" href="/profile/{{a.user.id}}">{{a.user}}</a></address> 
+						<time pubdate datetime="{{a.date|date:"Y-m-d"}}">
+							{{a.date|date:"d/m/Y"}}
+						</time>
+						</header>
+					</article>
+				</li>
 			{% endfor %}
+			</ul>
+		{% endtimezone %}
 		{% endif %}
-	</ul>
-</aside>
-<!--
-		<article>
-			<header></header>
+		</section>
+	</div>
+	<aside style="float: left; width: 40%;">
+		<ul style="list-style: none; padding-left: 15px;">
+			{% if question_list %}
+				{% for q in question_list %}
+				<li><img src="{% static 'staricon.png' %}" width="15" height="15" /><span class="likes">{{q.likes}}</span> <a href="questions/{{q.question__id}}">{{q.question__id}} {{q.question__user__username}}
+						{{q.question__text|striptags|truncatechars:80}}</a></li>
+				{% endfor %}
+			{% endif %}
+		</ul>
+	</aside>
+</main>
 
-			<section></section>
-			<section></section>
-
-			<footer></footer>
-		</article>
-		<article></article>
--->
 {% include "footer.html" %}

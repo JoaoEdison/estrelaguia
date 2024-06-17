@@ -134,7 +134,12 @@ main a:hover {
 	padding: 10px;
 }
 
-#likes {
+.likes {
 	color: yellow;
 	text-shadow: yellow 1px 1px 8px;
+}
+
+.form-after {
+	clear: both;
+	padding: 10px;
 }

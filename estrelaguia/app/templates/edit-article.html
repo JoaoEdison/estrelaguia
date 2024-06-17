@@ -14,9 +14,9 @@
 			<input type="number" name="{{f.name}}[]" value="{{f.height}}" required/>
 			<input type="number" name="{{f.name}}[]" value="{{f.width}}" required/>
 		        <br>
-			<label><input type="radio" value="L" name="{{f.name}}[]" checked/>Esquerda</label>
-			<label><input type="radio" value="C" name="{{f.name}}[]"/>Centro</label>
-			<label><input type="radio" value="R" name="{{f.name}}[]"/>Direita</label>
+			<label><input type="radio" value="L" name="{{f.name}}[]" {% if f.centralization == 'L' %} checked {%endif%} />Esquerda</label>
+			<label><input type="radio" value="C" name="{{f.name}}[]" {% if f.centralization == 'C' %} checked {%endif%} />Centro</label>
+			<label><input type="radio" value="R" name="{{f.name}}[]" {% if f.centralization == 'R' %} checked {%endif%} />Direita</label>
 	        <br>
 	        <label>Remover: <input type="checkbox" name="{{f.name}}[]"></label>
 	        <br>
@@ -30,17 +30,15 @@
 <script type="text/javascript">
 
 title = new TextField("title", "Título", true, 60, 0, "{{article.title}}")
-subtitle= new TextField("subtitle", "Subtítulo", true, 100, 0, "{{article.subtitle}}")
-{% spaceless %}
-text_area = new TextAreaForm("article_text", "text_area", "{{article.text|linebreaks}}", 10000)
-{% endspaceless %}
+subtitle= new TextField("subtitle", "Subtítulo", false, 100, 0, "{{article.subtitle}}")
+text_area = new TextAreaForm("article_text", "text_area", "{{article.text|escapejs}}", 10000)
 
 document.getElementById("title").outerHTML = title.getElements()
 document.getElementById("subtitle").outerHTML = subtitle.getElements()
 document.getElementById("text").outerHTML = text_area.getElements()
 
-files_obj = new FileInputs("files_obj","text_area")
-button = new Button(document.getElementById("swap"), "files", "files_obj", null)
+files_obj = new FileInputs("files_obj", "text_area")
+button = new Button("button", document.getElementById("swap"), "files", "files_obj", null)
 
 </script>
 

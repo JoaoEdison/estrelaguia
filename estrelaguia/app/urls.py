@@ -19,6 +19,10 @@ urlpatterns = [
     path("questions/favorites/<int:question_id>", views.favorite_question),
     path("questions/upvote/<int:question_id>", views.upvote_question),
 
+    path("answer/<int:answer_id>/", views.answer_text),
+    path("answer/<int:answer_id>/delete/", views.my_answer_delete),
+    path("answer/<int:answer_id>/edit/", views.edit_answer),
+
     path("articles/", views.articles),
     path("articles/<int:article_id>", views.one_article),
     path("articles/<int:article_id>/comment/", views.comment),
