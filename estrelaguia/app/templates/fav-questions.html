@@ -38,9 +38,8 @@ async function remove_favorite(e, question_id) {
 			'X-CSRFToken': document.getElementById('csrf').children[0].value
 		},
 	})
-	if (resp.ok) {
-		e.originalTarget.parentNode.parentNode.remove()
-	}
+	if (resp.ok)
+		e.target.parentNode.parentNode.remove()
 }
 
 </script>

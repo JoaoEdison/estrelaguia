@@ -1,6 +1,8 @@
 {% load static %}
 {% include "header.html" %}
 
+<main>
+
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     <div id="text"></div>
@@ -22,13 +24,15 @@
     <input type="submit" value="Salvar" />
 </form>
 
+</main>
+
 <script type="text/javascript" src="{% static 'utils.js' %}"></script>
 <script type="text/javascript">
 
 text_area = new TextAreaForm("question_text", "text_area", "{{question.text}}")
 document.getElementById("text").outerHTML = text_area.getElements()
 files_obj = new FileInputs("files_obj","text_area")
-button = new Button(document.getElementById("swap"), "files", "files_obj", null)
+button = new Button("button", document.getElementById("swap"), "files", "files_obj", null)
 
 </script>
 

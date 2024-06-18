@@ -28,6 +28,13 @@ main {
 ul {
     margin: 0;
 }
+ol {
+    margin-left: 30px;
+    padding: 0;
+}
+ol li {
+    padding-bottom: 10px;
+}
 
 input,textarea {
 	background-color: var(--color1-dark);
@@ -139,7 +146,7 @@ main a:hover {
 	text-shadow: yellow 1px 1px 8px;
 }
 
-.form-after {
+.after-publication {
 	clear: both;
 	padding: 10px;
 }

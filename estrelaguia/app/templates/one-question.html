@@ -25,7 +25,7 @@
 	{% endautoescape %}
 	
 	{% if user.is_authenticated %}
-	<form id="answerForm" action="{{question_id}}/answer/" method="POST" enctype="multipart/form-data" class="form-after">
+	<form id="answerForm" action="{{question_id}}/answer/" method="POST" enctype="multipart/form-data" class="after-publication">
 		{% csrf_token %}
 		<input type="hidden" name="prev" value="{{request.path}}" />
 		<button id="swap" type="button" onClick="button.swap(event);">Responder</button>
@@ -33,7 +33,7 @@
 	{% endif %}
 	
 	{% if resp_list %}
-	<ol>
+	<ol class="after-publication">
 		{% timezone "America/Sao_Paulo" %}
 			{% for resp in resp_list %}
 			<li data-id="{{resp.id}}">

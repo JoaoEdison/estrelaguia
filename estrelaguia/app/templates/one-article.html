@@ -37,8 +37,15 @@
 				{% endautoescape %}
 			</section>
 		</article>
+		{% if user.is_authenticated %}
+			<form id="commentForm" method="POST" action="{{article.id}}/comment/" class="after-publication">
+				{% csrf_token %}
+				<input type="hidden" name="prev" value="{{request.path}}" />
+				<button id="swap" type="button" onClick="button.swap(event);">Comentar</button>
+			</form>
+		{% endif %}
 		{% if comment_list %}
-		<ol>
+		<ol class="after-publication">
 			{% for c in comment_list %}
 			<li data-id="{{c.id}}">{{c.user}} {{c.date|date:"d/m/Y G:i:s"}}
 				<p>{{c.text}}</p>
@@ -51,15 +58,6 @@
 		</ol>
 		{% endif %}
 	{% endtimezone %}
-
-
-	{% if user.is_authenticated %}
-		<form id="commentForm" method="POST" action="{{article.id}}/comment/" style="clear:both; padding:10px;">
-			{% csrf_token %}
-			<input type="hidden" name="prev" value="{{request.path}}" />
-			<button id="swap" type="button" onClick="button.swap(event);">Comentar</button>
-		</form>
-	{% endif %}
 </main>
 
 <script type="text/javascript" src="{% static 'utils.js' %}"></script>
